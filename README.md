@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Aditya Kumar Singh: The Discography
 
-## Getting Started
+A personal portfolio styled like a music app. Projects are albums, skills are genres, achievements are charts, and the resume is **ADITYA.EXE**, an album you can actually play. Every track is synthesised live in the browser with Tone.js (no samples, no copyrighted audio).
 
-First, run the development server:
+Built with Next.js (App Router) · TypeScript · Tailwind CSS 4 · Framer Motion · Tone.js · Zustand · cmdk · lucide-react.
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # production build (all pages are static)
+npm run lint
+npm run format     # prettier
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Update your content
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Everything visible on the site lives in **`src/data/portfolio.ts`**. Search it for `TODO`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| What | Where in `portfolio.ts` |
+| --- | --- |
+| Name, tagline, bio lines (About page lyrics) | `profile` |
+| Site URL (SEO, sitemap, OG) | `profile.siteUrl` or env `NEXT_PUBLIC_SITE_URL` |
+| Photo | put `me.jpg` in `public/`, set `profile.photo = "/me.jpg"` |
+| Resume | put your PDF at `public/resume.pdf` |
+| LinkedIn / GitHub / LeetCode / Codeforces | `socials` (a `null` href shows "coming soon") |
+| Projects (albums) | `projects`: add an object and it appears everywhere |
+| Real screenshot as a cover | `cover: { image: "/lumina.png" }` on a project |
+| Skills (genres) | `skills`: project `credits` that match a skill link to its genre |
+| Achievements, roles, hobbies | `achievements`, `roles`, `hobbies` |
+| Contact form | `contactForm`: `"mailto"` works with no setup; for Formspree set `provider: "formspree"` and `formspreeId` |
 
-## Learn More
+### Adding a project
 
-To learn more about Next.js, take a look at the following resources:
+```ts
+{
+  slug: "my-new-thing",            // URL: /projects/my-new-thing
+  title: "My New Thing",
+  subtitle: "One-line pitch",
+  year: 2026,
+  released: "2026-11",             // used for "Recently Released"
+  status: "Released",              // or "In progress"
+  genre: "Web App",
+  categories: ["Web"],             // filter chips on Browse
+  description: "...",
+  features: [{ title: "Feature", detail: "Shown when the track is clicked" }],
+  credits: ["React.js", "TypeScript"],
+  github: "https://github.com/...",
+  live: null,
+  cover: { hue: 200 },             // 0-360, pins the generated cover colours
+  linerNotes: { problem: "...", approach: "...", learned: "..." },
+  featured: true,                  // shows in "Top Picks for Recruiters"
+}
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Edit the album (ADITYA.EXE)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Track titles and lyrics:** `resumeAlbum` in `src/data/portfolio.ts`. Lyrics are spread evenly across a track and snapped to bars. Pin a line with `bar: 4`. Add `href` to make a line a link.
+- **Tempo, length, key:** `src/lib/audio/meta.ts` (`bars × 240 / bpm` = seconds).
+- **The music itself:** `src/lib/audio/tracks.ts`. One `TrackSpec` per track id. Helpers:
+  - `beat(c, kit(c), { kick: "x...x...x...x...", snare: "....x.......x..." })`: 16 steps per bar, `X` = accent
+  - `chords(c, pad, [["C3","E3","G3"], ...], "1m", "1m")`: one chord per bar
+  - `line(c, synth, "E5 . D5 C5 . . A4 .", "8n", "8n", "8m")`: melody, `.` = rest, starts at bar 8
+  - `c.T.getTransport().schedule(fn, "20m")`: one-off events (e.g. the final chord)
+- Tone.js is only downloaded when a visitor first presses Play.
 
-## Deploy on Vercel
+## Shortcuts & easter eggs
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `Ctrl/⌘ K` or `/` search · `Space` play/pause · `←` `→` previous/next · `M` mute
+- Type **hire** anywhere: jumps to *Hire Me (Outro)*
+- **Konami code** (↑↑↓↓←→←→ B A): synthwave mode
+- Listen to 3 tracks (8s+ each): unlocks a hidden bonus track
+- Right-click or long-press a cover: Open / Play / GitHub / Copy link
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deploy to Vercel
+
+1. Push this folder to a GitHub repo.
+2. On [vercel.com](https://vercel.com): **Add New → Project**, import the repo (Next.js is auto-detected).
+3. Add env var `NEXT_PUBLIC_SITE_URL` = your final URL (e.g. `https://aditya.vercel.app`).
+4. Deploy. Check `/sitemap.xml`, `/robots.txt` and `/opengraph-image` afterwards.
+
+## Structure
+
+```
+src/
+  data/portfolio.ts          all content + the album tracklist
+  lib/audio/                 meta (tempo/lyric timing), tracks (Tone.js music), engine (playback)
+  store/                     Zustand player + UI stores
+  components/layout/         Sidebar, TabBar, Background, NowPlayingBar/Sheet, CommandPalette
+  components/music/          CoverArt, AlbumCard, TrackList, LyricsView, VisualizerRing, ...
+  components/ui/             shared primitives
+  app/                       pages, sitemap, robots, OG image
+```
