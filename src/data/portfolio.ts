@@ -46,8 +46,7 @@ export const profile = {
   tagline: "Software Engineering student · Full-stack, ML & embedded systems builder",
   location: "Pune, Maharashtra",
   email: "adi.ansh2006@gmail.com",
-  // TODO: set this to your Vercel / custom domain once deployed
-  siteUrl: "https://aditya-portfolio.vercel.app",
+  siteUrl: "https://adityakumarsingh.vercel.app",
   // TODO: add /public/resume.pdf (your phone number lives only there, never on the site)
   resume: "/resume.pdf",
   // TODO: add a square photo to /public (e.g. /me.jpg). null shows a generated avatar.
