@@ -1,4 +1,5 @@
-import { Download } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight, Download } from "lucide-react";
 import { albumTitle, profile, projects, skills, sortedByRelease } from "@/data/portfolio";
 import { formatTime, trackDuration, visibleTracks } from "@/lib/audio/meta";
 import { albumCover } from "@/lib/covers";
@@ -21,6 +22,14 @@ export default function Home() {
 
   return (
     <div className="space-y-12">
+      {/* Mobile header: title + profile photo, like a music app's account button */}
+      <div className="-mb-6 flex items-center justify-between lg:hidden">
+        <p className="page-title text-[32px]">Home</p>
+        <Link href="/profile" aria-label="Open profile" className="rounded-full">
+          <Avatar size={38} />
+        </Link>
+      </div>
+
       {/* Hero */}
       <section className="glass hud relative overflow-hidden rounded-[24px] p-5 sm:p-8">
         <div aria-hidden className="absolute -right-24 -top-24 size-96 rounded-full bg-pink/25 blur-[100px]" />
@@ -51,6 +60,30 @@ export default function Home() {
       <section>
         <SectionTitle kicker="// tracklist" title={`${albumTitle}: The Album`} />
         <ResumeTracklist />
+      </section>
+
+      {/* Artist spotlight */}
+      <section>
+        <SectionTitle kicker="// artist" title="Meet the Artist" href="/profile" />
+        <Link
+          href="/profile"
+          className="group glass glow-border relative flex items-center gap-5 overflow-hidden rounded-[var(--radius-card)] p-4 sm:gap-7 sm:p-6"
+        >
+          <div aria-hidden className="absolute -left-10 top-1/2 size-56 -translate-y-1/2 rounded-full bg-violet/30 blur-[70px]" />
+          <span className="relative shrink-0 rounded-full p-[3px] [background:var(--grad-glow)]">
+            <span className="block rounded-full bg-bg p-[3px]">
+              <Avatar size={112} />
+            </span>
+          </span>
+          <span className="relative min-w-0 flex-1">
+            <span className="mono-label block !text-[10px]">Artist · {profile.location}</span>
+            <span className="mt-1 block font-display text-[clamp(22px,4vw,32px)] font-bold leading-tight tracking-tight">{profile.name}</span>
+            <span className="mt-1 line-clamp-2 block text-sm text-muted sm:text-[15px]">{profile.tagline}</span>
+            <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-pink">
+              View Profile <ChevronRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+            </span>
+          </span>
+        </Link>
       </section>
 
       <section>

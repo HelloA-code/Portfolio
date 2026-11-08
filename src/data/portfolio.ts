@@ -49,8 +49,10 @@ export const profile = {
   siteUrl: "https://adityakumarsingh.vercel.app",
   // TODO: add /public/resume.pdf (your phone number lives only there, never on the site)
   resume: "/resume.pdf",
-  // TODO: add a square photo to /public (e.g. /me.jpg). null shows a generated avatar.
-  photo: null as string | null,
+  /** Square photo for avatars. null shows a generated monogram. */
+  photo: "/me.jpg" as string | null,
+  /** Tall photo for the Profile hero (4:5). Falls back to `photo`. */
+  portrait: "/me-portrait.jpg" as string | null,
   currentlyBuilding: "AI Calisthenics Tracker",
   bio: [
     "Hi, I'm Aditya.",

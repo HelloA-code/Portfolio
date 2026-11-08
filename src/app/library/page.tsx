@@ -3,6 +3,8 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { navSections } from "@/lib/nav";
 import { PageHeader } from "@/components/ui/primitives";
+import { Avatar } from "@/components/ui/Avatar";
+import { profile } from "@/data/portfolio";
 
 export const metadata: Metadata = { title: "Library" };
 
@@ -11,6 +13,14 @@ export default function LibraryPage() {
   return (
     <>
       <PageHeader kicker="library" title="Library" />
+      <Link href="/profile" className="glass glow-border mb-8 flex items-center gap-4 rounded-[var(--radius-card)] p-4">
+        <Avatar size={56} />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[17px] font-semibold">{profile.name}</span>
+          <span className="block text-sm text-muted">View profile</span>
+        </span>
+        <ChevronRight size={18} className="text-faint" />
+      </Link>
       {navSections.slice(1).map((s) => (
         <section key={s.title} className="mb-8">
           <p className="mono-label mb-2">{s.title}</p>

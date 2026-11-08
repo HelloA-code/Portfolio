@@ -40,6 +40,7 @@ const personLd = {
   url: siteUrl,
   email: `mailto:${profile.email}`,
   jobTitle: "Software Engineering Student",
+  ...(profile.photo ? { image: `${siteUrl}${profile.photo}` } : {}),
   address: { "@type": "PostalAddress", addressLocality: "Pune", addressRegion: "Maharashtra", addressCountry: "IN" },
   alumniOf: { "@type": "CollegeOrUniversity", name: "VIT Pune" },
   sameAs: socials.flatMap((s) => (s.href && s.href.startsWith("http") ? [s.href] : [])),

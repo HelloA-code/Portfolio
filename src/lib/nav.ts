@@ -1,4 +1,5 @@
 import {
+  CircleUser,
   Disc3,
   GraduationCap,
   House,
@@ -18,6 +19,7 @@ export const navSections: { title?: string; items: NavItem[] }[] = [
   {
     items: [
       { href: "/", label: "Home", icon: House },
+      { href: "/profile", label: "Profile", icon: CircleUser },
       { href: "/browse", label: "Browse", icon: LayoutGrid },
       { href: "/charts", label: "Charts", icon: Trophy },
     ],

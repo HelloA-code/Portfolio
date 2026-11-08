@@ -6,16 +6,16 @@ import { currentTrackId, usePlayer } from "@/store/player";
 import { EqualizerIcon } from "./EqualizerIcon";
 
 /** The ADITYA.EXE tracklist; click a row to play it. */
-export function ResumeTracklist() {
+export function ResumeTracklist({ limit, columns = 2 }: { limit?: number; columns?: 1 | 2 }) {
   const bonus = usePlayer((s) => s.bonusUnlocked);
   const current = usePlayer(currentTrackId);
   const status = usePlayer((s) => s.status);
   const playTrack = usePlayer((s) => s.playTrack);
   const toggle = usePlayer((s) => s.toggle);
-  const tracks = visibleTracks(bonus);
+  const tracks = visibleTracks(bonus).slice(0, limit);
 
   return (
-    <ol className="grid gap-x-8 md:grid-cols-2">
+    <ol className={`grid gap-x-8 ${columns === 2 ? "md:grid-cols-2" : ""}`}>
       {tracks.map((t, i) => {
         const isCurrent = t.id === current && status !== "idle";
         return (

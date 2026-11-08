@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import { profile } from "@/data/portfolio";
 import { isActive, navSections } from "@/lib/nav";
 import { useUi } from "@/store/ui";
+import { Avatar } from "@/components/ui/Avatar";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -13,10 +14,8 @@ export function Sidebar() {
 
   return (
     <aside className="glass fixed inset-y-0 left-0 z-30 hidden w-[240px] flex-col border-y-0 border-l-0 bg-black/40 px-3 pb-6 pt-5 lg:flex">
-      <Link href="/" className="mb-5 flex items-center gap-2.5 px-2">
-        <span className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-cyan via-violet to-pink font-display text-sm font-bold">
-          A
-        </span>
+      <Link href="/profile" className="mb-5 flex items-center gap-2.5 rounded-lg px-2">
+        <Avatar size={34} />
         <span className="leading-tight">
           <span className="block text-[15px] font-semibold">{profile.name}</span>
           <span className="mono-label !text-[9px]">sys.status: building</span>

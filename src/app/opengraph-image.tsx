@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { albumTitle, profile } from "@/data/portfolio";
 
@@ -5,8 +7,11 @@ export const alt = `${albumTitle} by ${profile.name}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-/** Album-cover style share card */
-export default function OgImage() {
+/** Album-cover style share card, with the artist photo on the cover */
+export default async function OgImage() {
+  const photo = profile.photo
+    ? `data:image/jpeg;base64,${(await readFile(join(process.cwd(), "public", profile.photo))).toString("base64")}`
+    : null;
   return new ImageResponse(
     (
       <div
@@ -24,6 +29,7 @@ export default function OgImage() {
       >
         <div
           style={{
+            position: "relative",
             width: 430,
             height: 430,
             borderRadius: 28,
@@ -38,6 +44,16 @@ export default function OgImage() {
           }}
         >
           {albumTitle}
+          {photo && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={photo}
+              alt=""
+              width={150}
+              height={150}
+              style={{ position: "absolute", right: -30, bottom: -30, borderRadius: 999, border: "6px solid #05050a" }}
+            />
+          )}
         </div>
         <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
           <div style={{ fontSize: 22, color: "#22d3ee", letterSpacing: 4 }}>{"// NOW PLAYING"}</div>
