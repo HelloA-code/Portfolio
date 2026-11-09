@@ -8,13 +8,14 @@ import { PageHeader } from "@/components/ui/primitives";
 
 export const metadata: Metadata = { title: "Discography", description: "Education and releases on a timeline." };
 
-type Entry = { year: number | null; kind: "Education" | "Release"; node: ReactNode; key: string };
+type Entry = { year: number | null; ongoing: boolean; kind: "Education" | "Release"; node: ReactNode; key: string };
 
 export default function DiscographyPage() {
   const entries: Entry[] = [
     ...education.map((e) => ({
       key: e.title,
       year: e.end ?? e.start,
+      ongoing: e.ongoing === true,
       kind: "Education" as const,
       node: (
         <>
@@ -31,7 +32,7 @@ export default function DiscographyPage() {
             </div>
           )}
           <p className="mono-label mt-2">
-            {e.start && e.end ? `${e.start}–${e.end}` : e.start ? `${e.start}–present · graduation TBA` : `Class of ${e.end}`}
+            {e.start && e.end ? `${e.start}–${e.end}${e.ongoing ? " · in progress" : ""}` : e.start ? `${e.start}–present` : `Class of ${e.end}`}
           </p>
         </>
       ),
@@ -39,6 +40,7 @@ export default function DiscographyPage() {
     ...projects.map((p) => ({
       key: p.slug,
       year: p.year,
+      ongoing: p.status === "In progress",
       kind: "Release" as const,
       node: (
         <Link href={`/projects/${p.slug}`} className="group flex items-center gap-4">
@@ -46,18 +48,18 @@ export default function DiscographyPage() {
           <span>
             <span className="block text-[17px] font-semibold group-hover:text-pink">{p.title}</span>
             <span className="block text-muted">{p.subtitle}</span>
-            <span className="mono-label block !text-[10px]">{p.status}</span>
+            {p.status === "In progress" && <span className="mono-label block !text-[10px] !text-cyan">● In the studio</span>}
           </span>
         </Link>
       ),
     })),
   ];
 
+  // "Now" for ongoing work, then newest year first, undated last
+  const label = (e: Entry) => (e.ongoing ? "Now" : e.year ? String(e.year) : "Undated");
+  const rank = (e: Entry) => (e.ongoing ? Infinity : (e.year ?? -Infinity));
   const byYear = new Map<string, Entry[]>();
-  for (const e of [...entries].sort((a, b) => (b.year ?? 0) - (a.year ?? 0))) {
-    const k = e.year ? String(e.year) : "Undated";
-    byYear.set(k, [...(byYear.get(k) ?? []), e]);
-  }
+  for (const e of [...entries].sort((a, b) => rank(b) - rank(a))) byYear.set(label(e), [...(byYear.get(label(e)) ?? []), e]);
 
   return (
     <>

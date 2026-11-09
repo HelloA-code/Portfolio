@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ViewTransition } from "react";
-import { CodeXml, Play } from "lucide-react";
+import { Suspense, ViewTransition } from "react";
+import { CodeXml, ExternalLink } from "lucide-react";
 import { getProject, profile, projects, skills } from "@/data/portfolio";
 import { projectCover } from "@/lib/covers";
 import { paletteFor } from "@/lib/seed";
@@ -27,7 +27,15 @@ export async function generateMetadata({ params }: PageProps<"/projects/[slug]">
 
 const genreFor = (skill: string) => skills.find((g) => g.skills.includes(skill));
 
-export default async function ProjectPage({ params }: PageProps<"/projects/[slug]">) {
+export default function ProjectPage({ params }: PageProps<"/projects/[slug]">) {
+  return (
+    <Suspense fallback={<div aria-hidden className="h-[60vh] animate-pulse rounded-[var(--radius-card)] bg-white/5" />}>
+      <ProjectContent params={params} />
+    </Suspense>
+  );
+}
+
+async function ProjectContent({ params }: { params: PageProps<"/projects/[slug]">["params"] }) {
   const { slug } = await params;
   const p = getProject(slug);
   if (!p) notFound();
@@ -45,41 +53,32 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
 
       <section className="grid items-end gap-6 md:grid-cols-[minmax(0,280px)_1fr] md:gap-10">
         <ViewTransition name={`cover-${p.slug}`} share="morph" default="none">
-          <CoverArt {...projectCover(p)} priority className="w-full max-w-[280px] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)] max-md:mx-auto" />
+          <CoverArt {...projectCover(p)} priority className="w-full max-w-[240px] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)] max-md:mx-auto md:max-w-[280px]" />
         </ViewTransition>
-        <div className="min-w-0">
+        <div className="min-w-0 max-md:text-center">
           <p className="mono-label mb-2">{`// album · ${p.status === "In progress" ? "sys.status: building" : "released"}`}</p>
           <h1 className="page-title text-[clamp(34px,6vw,56px)]">{p.title}</h1>
           <p className="mt-1 text-lg text-muted">{p.subtitle}</p>
-          <div className="mt-3 flex items-center gap-2.5">
+          <Link href="/profile" className="mt-3 inline-flex items-center gap-2.5 rounded-full">
             <Avatar size={26} />
-            <span className="font-semibold text-pink">{profile.name}</span>
-          </div>
-          <p className="mono-label mt-2">
-            {p.genre} · {p.year ?? "TBA"} · {p.status}
-          </p>
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            {p.live ? (
-              <a href={p.live} target="_blank" rel="noopener noreferrer" className={pill.primary}>
-                <Play size={17} fill="currentColor" /> Live Demo
+            <span className="font-semibold text-pink hover:underline">{profile.name}</span>
+          </Link>
+          <p className="mono-label mt-2">{[p.genre, p.year, p.status === "In progress" ? "In progress" : null].filter(Boolean).join(" · ")}</p>
+          <div className="mt-5 flex flex-wrap items-center gap-3 max-md:justify-center">
+            {p.trackId && <PlayTrackButton trackId={p.trackId} label="Play Track" className={pill.primary} />}
+            {p.live && (
+              <a href={p.live} target="_blank" rel="noopener noreferrer" className={pill.secondary}>
+                <ExternalLink size={17} /> Live Demo
               </a>
-            ) : (
-              <span className={`${pill.primary} cursor-not-allowed opacity-50`} aria-disabled="true">
-                <Play size={17} fill="currentColor" /> Demo coming soon
-              </span>
             )}
-            {p.github ? (
+            {p.github && (
               <a href={p.github} target="_blank" rel="noopener noreferrer" className={pill.secondary}>
                 <CodeXml size={17} /> GitHub
               </a>
-            ) : (
-              <span className={`${pill.secondary} cursor-not-allowed opacity-50`} aria-disabled="true">
-                <CodeXml size={17} /> GitHub soon
-              </span>
             )}
-            {p.trackId && <PlayTrackButton trackId={p.trackId} label="Play Track" className={pill.secondary} />}
             <ShareMenu title={p.title} />
           </div>
+          {!p.live && !p.github && <p className="mt-3 text-[13px] text-faint">Demo and code links coming soon.</p>}
         </div>
       </section>
 
@@ -88,9 +87,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
       <section className="mt-8">
         <SectionTitle kicker="// tracks" title="Track List" />
         <TrackList features={p.features} seed={p.slug} />
-        <p className="mono-label mt-3">
-          {p.features.length} tracks · {p.year ?? "TBA"}
-        </p>
+        <p className="mono-label mt-3">{[`${p.features.length} tracks`, p.year].filter(Boolean).join(" · ")}</p>
       </section>
 
       <div className="mt-10 grid gap-6 lg:grid-cols-2">

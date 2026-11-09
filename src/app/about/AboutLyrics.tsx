@@ -67,6 +67,7 @@ export function AboutLyrics() {
         <div>
           <p className="mono-label">{"// about me · lyrics"}</p>
           <h1 className="page-title text-[34px] sm:text-[40px]">About Me</h1>
+          <p className="mt-1 text-[13px] text-faint">Scroll, use ↑ ↓, or tap a line</p>
         </div>
         <div className="flex items-center gap-1">
           <IconButton label="Previous line" onClick={() => go(-1)}>
@@ -82,9 +83,11 @@ export function AboutLyrics() {
       </div>
 
       <div ref={box} onPointerEnter={() => setHover(true)} onPointerLeave={() => setHover(false)} onFocus={() => setHover(true)} onBlur={() => setHover(false)}>
-        <LyricsView lines={lines} active={active} onSelect={setActive} follow={!reduce} className="h-[64vh] !py-[24vh] [&_li]:sm:!text-[44px]" />
+        <LyricsView lines={lines} active={active} onSelect={setActive} follow={!reduce} className="h-[calc(100dvh-340px)] min-h-[320px] !py-[14vh] lg:h-[calc(100dvh-240px)] [&_li]:sm:!text-[44px]" />
       </div>
-      <p className="mono-label mt-2 text-center">scroll, ↑ ↓, or click a line</p>
+      <p className="mono-label mt-3 text-center">
+        {active + 1} / {lines.length}
+      </p>
     </div>
   );
 }

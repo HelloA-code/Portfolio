@@ -23,7 +23,7 @@ const shelf = "shelf -mx-4 px-4 sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0 [grid-auto-colu
 export default function ProfilePage() {
   const degree = education[0];
   const linkedin = socials.find((s) => s.label === "LinkedIn")?.href;
-  const latest = sortedByRelease().find((p) => p.released) ?? projects[0];
+  const latest = sortedByRelease().find((p) => p.released && p.status === "Released") ?? projects[0];
   const hackathons = projects.filter((p) => p.categories.includes("Hackathon")).length;
   const portrait = profile.portrait ?? profile.photo;
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getGenre, projectsForGenre, skills } from "@/data/portfolio";
 import { AlbumCard } from "@/components/music/AlbumCard";
@@ -14,7 +15,15 @@ export async function generateMetadata({ params }: PageProps<"/genres/[slug]">):
   return g ? { title: g.name, description: `${g.name}: ${g.skills.join(", ")}` } : {};
 }
 
-export default async function GenrePage({ params }: PageProps<"/genres/[slug]">) {
+export default function GenrePage({ params }: PageProps<"/genres/[slug]">) {
+  return (
+    <Suspense fallback={<div aria-hidden className="h-[60vh] animate-pulse rounded-[var(--radius-card)] bg-white/5" />}>
+      <GenreContent params={params} />
+    </Suspense>
+  );
+}
+
+async function GenreContent({ params }: { params: PageProps<"/genres/[slug]">["params"] }) {
   const g = getGenre((await params).slug);
   if (!g) notFound();
   const albums = projectsForGenre(g);

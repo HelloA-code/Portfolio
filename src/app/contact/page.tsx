@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus } from "lucide-react";
+import { Mail, Plus } from "lucide-react";
 import { socials } from "@/data/portfolio";
 import { PageHeader } from "@/components/ui/primitives";
 import { ContactForm } from "./ContactForm";
@@ -18,7 +18,7 @@ export default function ContactPage() {
             <span className="grid size-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-cyan via-violet to-pink font-display font-bold">{s.label[0]}</span>
             <span className="min-w-0 flex-1">
               <span className="block font-semibold">{s.label}</span>
-              <span className="block truncate text-sm text-muted">{s.href ? s.handle : "Link coming soon"}</span>
+              <span className="block truncate text-sm text-muted">{s.href ? s.href.replace(/^(https?:\/\/(www\.)?|mailto:)/, "") : "Link coming soon"}</span>
             </span>
             {s.href ? (
               <a
@@ -27,7 +27,7 @@ export default function ContactPage() {
                 rel="noopener noreferrer"
                 className="inline-flex h-8 items-center gap-1 rounded-full bg-pink px-3.5 text-[13px] font-semibold text-white hover:shadow-[0_0_16px_rgba(255,45,117,0.6)]"
               >
-                <Plus size={14} /> Follow
+                {s.label === "Email" ? <Mail size={14} /> : <Plus size={14} />} {s.label === "Email" ? "Email" : "Follow"}
               </a>
             ) : (
               <span className="inline-flex h-8 items-center rounded-full border border-line px-3.5 text-[13px] text-faint">Soon</span>

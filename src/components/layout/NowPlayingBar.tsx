@@ -41,7 +41,8 @@ export function NowPlayingBar() {
 
   return (
     <>
-      {/* Desktop */}
+      {/* Desktop: fade band so scrolled content doesn't show around the floating bar */}
+      <div aria-hidden className="pointer-events-none fixed left-[240px] right-0 top-0 z-30 hidden h-[92px] bg-gradient-to-b from-bg from-60% to-transparent lg:block" />
       <div className="fixed left-[calc(240px+24px)] right-6 top-3 z-40 hidden justify-center lg:flex">
         <div className="glass glow-border flex h-[60px] w-full max-w-[860px] items-center gap-4 rounded-2xl bg-black/50 px-3" data-active={playing}>
           <Controls />

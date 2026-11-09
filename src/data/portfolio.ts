@@ -87,6 +87,8 @@ export type Education = {
   score: string;
   start: number | null;
   end: number | null;
+  /** still studying: shown under "Now" on the timeline */
+  ongoing?: boolean;
   detail?: string;
 };
 
@@ -97,6 +99,7 @@ export const education: Education[] = [
     score: "CGPA 8.85",
     start: 2024,
     end: 2028,
+    ongoing: true,
     detail: "Sem 1: 9.25 · Sem 2: 8.85 · Sem 3: 8.24 · Sem 4: 9.1",
   },
   {
