@@ -4,12 +4,15 @@
  */
 import type * as ToneNS from "tone";
 import { trackMeta } from "./meta";
-import type { TrackSpec } from "./tracks";
+import type { TrackSpec } from "./helpers";
+
+/** Which score plays: the music-app album or the horror-mode re-score */
+export type ScoreVariant = "music" | "horror";
 
 type Tone = typeof ToneNS;
 
 let T: Tone | null = null;
-let specs: Record<string, TrackSpec> | null = null;
+let specs: Record<ScoreVariant, Record<string, TrackSpec>> | null = null;
 let master: ToneNS.Compressor | null = null;
 let fft: ToneNS.Analyser | null = null;
 let wave: ToneNS.Analyser | null = null;
@@ -20,9 +23,9 @@ const GAIN = 0.9;
 
 async function load(): Promise<Tone> {
   if (!T) {
-    const [tone, mod] = await Promise.all([import("tone"), import("./tracks")]);
+    const [tone, music, horror] = await Promise.all([import("tone"), import("./tracks"), import("./horrorTracks")]);
     T = tone;
-    specs = mod.tracks;
+    specs = { music: music.tracks, horror: horror.horrorTracks };
     const limiter = new T.Limiter(-1).toDestination();
     master = new T.Compressor(-20, 3).connect(limiter);
     fft = new T.Analyser("fft", 64);
@@ -53,7 +56,7 @@ export const engine = {
     return T !== null;
   },
 
-  async play(id: string, onEnded: () => void) {
+  async play(id: string, onEnded: () => void, variant: ScoreVariant = "music") {
     const tone = await load();
     if (!specs || !master) return;
     const tr = tone.getTransport();
@@ -62,7 +65,7 @@ export const engine = {
     disposeCurrent();
 
     const meta = trackMeta[id];
-    const spec = specs[id];
+    const spec = specs[variant][id];
     tr.bpm.value = meta.bpm;
     tr.swing = spec.swing ?? 0;
     tr.swingSubdivision = "16n";

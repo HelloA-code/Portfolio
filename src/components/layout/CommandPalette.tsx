@@ -8,6 +8,7 @@ import { projects, skills } from "@/data/portfolio";
 import { visibleTracks } from "@/lib/audio/meta";
 import { projectCover } from "@/lib/covers";
 import { allNavItems } from "@/lib/nav";
+import { horrorNav } from "@/components/horror/nav";
 import { usePlayer } from "@/store/player";
 import { useUi } from "@/store/ui";
 import { CoverArt } from "@/components/music/CoverArt";
@@ -98,6 +99,11 @@ export function CommandPalette() {
           {allNavItems.map(({ href, label, icon: Icon }) => (
             <Command.Item key={href} value={`page ${label}`} onSelect={() => go(href)} className={item}>
               {row(<Icon size={18} className="shrink-0 text-violet" />, label)}
+            </Command.Item>
+          ))}
+          {horrorNav.map(({ href, label, icon: Icon }) => (
+            <Command.Item key={href} value={`horror mode mission ${label}`} onSelect={() => go(href)} className={item}>
+              {row(<Icon size={18} className="shrink-0 text-[#ff8a70]" />, `Horror Mode: ${label}`)}
             </Command.Item>
           ))}
           <Command.Item value="page resume pdf download" onSelect={() => go("/resume.pdf")} className={item}>

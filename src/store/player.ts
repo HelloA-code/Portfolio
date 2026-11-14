@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { albumTitle, getTrack, profile } from "@/data/portfolio";
-import { engine } from "@/lib/audio/engine";
+import { engine, type ScoreVariant } from "@/lib/audio/engine";
 import { trackDuration, visibleTracks } from "@/lib/audio/meta";
 import { useUi } from "./ui";
 
@@ -21,6 +21,8 @@ type PlayerState = {
   bonusUnlocked: boolean;
   sheetOpen: boolean;
   queueOpen: boolean;
+  /** which score the album plays in: set by the active theme's layout */
+  variant: ScoreVariant;
 
   playTrack: (id: string) => Promise<void>;
   toggle: () => void;
@@ -33,6 +35,7 @@ type PlayerState = {
   cycleRepeat: () => void;
   setSheet: (open: boolean) => void;
   setQueueOpen: (open: boolean) => void;
+  setVariant: (variant: ScoreVariant) => void;
   hydrate: () => void;
 };
 
@@ -114,6 +117,7 @@ export const usePlayer = create<PlayerState>()((set, get) => {
     bonusUnlocked: false,
     sheetOpen: false,
     queueOpen: false,
+    variant: "music",
 
     async playTrack(id) {
       let { queue } = get();
@@ -121,9 +125,13 @@ export const usePlayer = create<PlayerState>()((set, get) => {
       const index = queue.indexOf(id);
       const token = ++playToken;
       set({ queue, index, status: "loading", position: 0, duration: trackDuration(id) });
-      await engine.play(id, () => {
-        if (token === playToken) handleEnded();
-      });
+      await engine.play(
+        id,
+        () => {
+          if (token === playToken) handleEnded();
+        },
+        get().variant,
+      );
       if (token !== playToken) return;
       engine.setVolume(get().volume, get().muted);
       set({ status: "playing" });
@@ -203,6 +211,18 @@ export const usePlayer = create<PlayerState>()((set, get) => {
 
     setSheet: (sheetOpen) => set({ sheetOpen }),
     setQueueOpen: (queueOpen) => set({ queueOpen }),
+
+    setVariant(variant) {
+      const s = get();
+      if (s.variant === variant) return;
+      set({ variant, sheetOpen: false });
+      // keep the music going across the switch, in the other score
+      if (s.status === "playing") void s.playTrack(s.queue[s.index]);
+      else if (s.status === "paused") {
+        engine.stop();
+        set({ status: "idle", position: 0 });
+      }
+    },
 
     hydrate() {
       try {

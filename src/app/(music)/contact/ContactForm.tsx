@@ -1,40 +1,13 @@
 "use client";
 
 import { Send } from "lucide-react";
-import { useState, type FormEvent } from "react";
-import { contactForm, profile } from "@/data/portfolio";
+import { profile } from "@/data/portfolio";
+import { useContactSubmit } from "@/lib/useContactSubmit";
 import { pill } from "@/components/ui/primitives";
 
-/** Uses Formspree when configured in portfolio.ts, otherwise opens the visitor's mail app. */
+/** Music-theme contact form; sending logic lives in useContactSubmit. */
 export function ContactForm() {
-  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
-
-  async function submit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
-    const name = String(data.get("name") ?? "");
-    const message = String(data.get("message") ?? "");
-
-    if (contactForm.provider === "formspree" && contactForm.formspreeId) {
-      setState("sending");
-      try {
-        const res = await fetch(`https://formspree.io/f/${contactForm.formspreeId}`, {
-          method: "POST",
-          headers: { Accept: "application/json" },
-          body: data,
-        });
-        setState(res.ok ? "sent" : "error");
-        if (res.ok) form.reset();
-      } catch {
-        setState("error");
-      }
-      return;
-    }
-    const subject = encodeURIComponent(`Hello from ${name || "your portfolio"}`);
-    const body = encodeURIComponent(message);
-    window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
-  }
+  const { state, submit } = useContactSubmit();
 
   const field = "w-full rounded-xl border border-line bg-white/5 px-4 py-3 text-[15px] outline-none transition-colors placeholder:text-faint focus:border-cyan/70 focus:bg-white/10";
 

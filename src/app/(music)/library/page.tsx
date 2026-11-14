@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Skull } from "lucide-react";
 import { navSections } from "@/lib/nav";
 import { PageHeader } from "@/components/ui/primitives";
 import { Avatar } from "@/components/ui/Avatar";
@@ -18,6 +18,17 @@ export default function LibraryPage() {
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[17px] font-semibold">{profile.name}</span>
           <span className="block text-sm text-muted">View profile</span>
+        </span>
+        <ChevronRight size={18} className="text-faint" />
+      </Link>
+      <Link
+        href="/mission"
+        className="mb-8 flex items-center gap-4 rounded-[var(--radius-card)] border border-[#a3201c]/50 bg-[#a3201c]/10 p-4"
+      >
+        <Skull size={22} className="text-[#ff8a70]" />
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold text-[#ff8a70]">Horror Mode</span>
+          <span className="block text-sm text-muted">The same portfolio as a survival-horror dossier</span>
         </span>
         <ChevronRight size={18} className="text-faint" />
       </Link>

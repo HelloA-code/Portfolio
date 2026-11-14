@@ -73,6 +73,24 @@ Everything visible on the site lives in **`src/data/portfolio.ts`**. Search it f
 - Listen to 3 tracks (8s+ each): unlocks a hidden bonus track
 - Right-click or long-press a cover: Open / Play / GitHub / Copy link
 
+## Horror mode (`/mission`)
+
+A second theme of the same portfolio: a survival-horror "field dossier". It's original (no game names, logos, characters or assets) and reads the same `src/data/portfolio.ts`, so content updates show up in both themes.
+
+| Page | What it shows |
+| --- | --- |
+| `/mission` Briefing | Title card, dossier with your photo, mission objectives from `achievements` |
+| `/mission/inventory` | Projects packed into a case grid; hover to examine, click to inspect |
+| `/mission/inventory/[slug]` | Item inspect view with pointer tilt, notes (features) and parts (credits) |
+| `/mission/files` | Education, records and roles as stamped paper documents |
+| `/mission/upgrades` | Skill groups with real counts: skills per group and projects using them |
+| `/mission/diary` | Your `profile.bio`, typed out on a page |
+| `/mission/safe-room` | Typewriter that downloads the resume, a letter-style contact form, contacts |
+
+- **Score:** `src/lib/audio/horrorTracks.ts` re-scores every album track (same ids, tempo and length as `tracks.ts`, so lyrics stay in sync). Lyrics show as subtitles while a track plays.
+- **Switching:** "Horror Mode" in the sidebar / Library tab, and the exit icon in the horror HUD. Whatever is playing restarts in the other score.
+- **Styles:** `.horror`, `.h-panel`, `.h-paper`, `.h-btn` and friends at the bottom of `globals.css`.
+
 ## Deploy to Vercel
 
 1. Push this folder to a GitHub repo.
@@ -85,10 +103,13 @@ Everything visible on the site lives in **`src/data/portfolio.ts`**. Search it f
 ```
 src/
   data/portfolio.ts          all content + the album tracklist
-  lib/audio/                 meta (tempo/lyric timing), tracks (Tone.js music), engine (playback)
+  lib/audio/                 meta (tempo/lyric timing), helpers, tracks + horrorTracks (scores), engine
   store/                     Zustand player + UI stores
   components/layout/         Sidebar, TabBar, Background, NowPlayingBar/Sheet, CommandPalette
   components/music/          CoverArt, AlbumCard, TrackList, LyricsView, VisualizerRing, ...
   components/ui/             shared primitives
-  app/                       pages, sitemap, robots, OG image
+  components/horror/         horror-mode HUD, background, inventory, typewriter, ...
+  app/(music)/               music-app pages (route group, URLs unchanged)
+  app/mission/               horror-mode pages
+  app/                       root layout, sitemap, robots, OG image
 ```

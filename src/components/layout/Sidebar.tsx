@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search } from "lucide-react";
+import { Search, Skull } from "lucide-react";
 import { profile } from "@/data/portfolio";
 import { isActive, navSections } from "@/lib/nav";
 import { useUi } from "@/store/ui";
@@ -58,6 +58,12 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
+      <Link
+        href="/mission"
+        className="mb-3 flex items-center gap-2.5 rounded-lg border border-[#a3201c]/50 bg-[#a3201c]/10 px-3 py-2 text-[13px] font-semibold text-[#ff8a70] transition-colors hover:bg-[#a3201c]/25"
+      >
+        <Skull size={16} /> Horror Mode
+      </Link>
       <p className="mono-label px-2 !text-[9px] text-faint">v1.0 · {profile.location}</p>
     </aside>
   );
